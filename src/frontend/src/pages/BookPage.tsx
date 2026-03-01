@@ -146,8 +146,17 @@ export function BookPage() {
   return (
     <main className="min-h-screen bg-background">
       {/* Page Header */}
-      <div className="bg-primary pt-32 pb-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div
+        className="relative bg-primary pt-32 pb-16"
+        style={{
+          backgroundImage:
+            "url(/assets/generated/goa-neighborhood.dim_800x600.jpg)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="absolute inset-0 bg-primary/80" />
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

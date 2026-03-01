@@ -102,7 +102,7 @@ export function HomePage() {
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage:
-              "url(/assets/generated/hero-goa-beach.dim_1600x900.jpg)",
+              "url(/assets/generated/goa-hero-beach.dim_1400x700.jpg)",
           }}
         />
         {/* Overlay */}
@@ -381,34 +381,53 @@ export function HomePage() {
       {/* Why Choose Us */}
       <section className="py-24 bg-secondary/50 azulejo-pattern">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
-            className="text-center mb-16"
-          >
-            <motion.p
-              variants={fadeUp}
-              custom={0}
-              className="font-heading text-xs uppercase tracking-widest text-accent font-semibold mb-3"
+          <div className="flex flex-col lg:flex-row gap-12 items-center mb-16">
+            {/* Left: Text */}
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              className="flex-1 text-center lg:text-left"
             >
-              Why Williams Homes
-            </motion.p>
-            <motion.h2
-              variants={fadeUp}
-              custom={1}
-              className="font-display text-4xl sm:text-5xl font-semibold text-foreground mb-4 text-balance"
+              <motion.p
+                variants={fadeUp}
+                custom={0}
+                className="font-heading text-xs uppercase tracking-widest text-accent font-semibold mb-3"
+              >
+                Why Williams Homes
+              </motion.p>
+              <motion.h2
+                variants={fadeUp}
+                custom={1}
+                className="font-display text-4xl sm:text-5xl font-semibold text-foreground mb-4 text-balance"
+              >
+                Built for Goa Property Owners
+              </motion.h2>
+              <motion.p
+                variants={fadeUp}
+                custom={2}
+                className="font-body text-sm text-accent/80 italic tracking-wide"
+              >
+                Aamchi Maati, Aamchi Maaya — Our Land, Our Care
+              </motion.p>
+            </motion.div>
+            {/* Right: Goa image */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full lg:w-80 xl:w-96 flex-shrink-0"
             >
-              Built for Goa Property Owners
-            </motion.h2>
-            <motion.p
-              variants={fadeUp}
-              custom={2}
-              className="font-body text-sm text-accent/80 italic tracking-wide"
-            >
-              Aamchi Maati, Aamchi Maaya — Our Land, Our Care
-            </motion.p>
-          </motion.div>
+              <div className="rounded-2xl overflow-hidden shadow-elevated border border-border/40">
+                <img
+                  src="/assets/generated/goa-backwaters.dim_800x600.jpg"
+                  alt="Peaceful Goa backwaters"
+                  className="w-full h-56 object-cover"
+                />
+              </div>
+            </motion.div>
+          </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature, i) => (
@@ -485,6 +504,96 @@ export function HomePage() {
                 {area}
               </div>
             ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Goa Photo Gallery */}
+      <section className="py-20 bg-secondary/30">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            className="text-center mb-12"
+          >
+            <motion.p
+              variants={fadeUp}
+              custom={0}
+              className="font-heading text-xs uppercase tracking-widest text-accent font-semibold mb-3"
+            >
+              Beautiful Goa
+            </motion.p>
+            <motion.h2
+              variants={fadeUp}
+              custom={1}
+              className="font-display text-4xl sm:text-5xl font-semibold text-foreground mb-4 text-balance"
+            >
+              The Paradise We Call Home
+            </motion.h2>
+            <motion.p
+              variants={fadeUp}
+              custom={2}
+              className="font-body text-muted-foreground max-w-xl mx-auto"
+            >
+              From sun-drenched beaches to colonial villas draped in
+              bougainvillea — this is Goa, and it's worth protecting.
+            </motion.p>
+          </motion.div>
+
+          {/* Mosaic Grid */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-5xl mx-auto"
+          >
+            {/* Large hero image spanning 2 cols & 2 rows */}
+            <div className="col-span-2 row-span-2 rounded-2xl overflow-hidden shadow-card group">
+              <img
+                src="/assets/generated/goa-hero-beach.dim_1400x700.jpg"
+                alt="Goa beach coastline"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                style={{ minHeight: "260px" }}
+              />
+            </div>
+            {/* Villa */}
+            <div className="rounded-2xl overflow-hidden shadow-card group">
+              <img
+                src="/assets/generated/goa-villa-property.dim_800x600.jpg"
+                alt="Portuguese-colonial Goa villa"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                style={{ minHeight: "130px" }}
+              />
+            </div>
+            {/* Neighborhood */}
+            <div className="rounded-2xl overflow-hidden shadow-card group">
+              <img
+                src="/assets/generated/goa-neighborhood.dim_800x600.jpg"
+                alt="Goa traditional neighborhood"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                style={{ minHeight: "130px" }}
+              />
+            </div>
+            {/* Backwaters */}
+            <div className="rounded-2xl overflow-hidden shadow-card group">
+              <img
+                src="/assets/generated/goa-backwaters.dim_800x600.jpg"
+                alt="Goa backwaters"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                style={{ minHeight: "130px" }}
+              />
+            </div>
+            {/* Bougainvillea */}
+            <div className="rounded-2xl overflow-hidden shadow-card group">
+              <img
+                src="/assets/generated/goa-bougainvillea.dim_800x500.jpg"
+                alt="Bougainvillea on Goan wall"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                style={{ minHeight: "130px" }}
+              />
+            </div>
           </motion.div>
         </div>
       </section>
