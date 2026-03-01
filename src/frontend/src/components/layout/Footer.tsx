@@ -7,6 +7,26 @@ export function Footer() {
 
   return (
     <footer className="bg-primary text-primary-foreground">
+      {/* Scenic Goa banner above footer */}
+      <div className="relative h-48 overflow-hidden">
+        <img
+          src="/assets/generated/goa-hero-beach.dim_1400x700.jpg"
+          alt="Beautiful Goa coastline managed by Williams Homes"
+          className="w-full h-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-primary/65" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center px-4">
+            <p className="font-heading text-xs uppercase tracking-widest text-accent font-semibold mb-2">
+              Williams Homes
+            </p>
+            <p className="font-display text-xl sm:text-2xl font-semibold text-white">
+              Protecting Beautiful Goa Properties Since 2022
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Traditional Goa azulejo tile strip at footer top */}
       <div className="tile-border w-full" />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">

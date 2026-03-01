@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -20,17 +21,27 @@ import { useInternetIdentity } from "@/hooks/useInternetIdentity";
 import {
   useAllConsultations,
   useAllMaintenanceSignUps,
-  useInitializeAccess,
-  useIsAdmin,
   useUpdateConsultationStatus,
   useUpdateMaintenanceStatus,
 } from "@/hooks/useQueries";
-import { Loader2, RefreshCw, Shield } from "lucide-react";
+import {
+  AlertCircle,
+  Eye,
+  EyeOff,
+  Loader2,
+  LogIn,
+  LogOut,
+  RefreshCw,
+  Shield,
+} from "lucide-react";
 import { motion } from "motion/react";
-import { useEffect, useRef } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { ConsultationStatus, MaintenanceStatus } from "../backend";
 import type { ConsultationBooking, MaintenanceSignUp } from "../backend.d.ts";
+
+const ADMIN_PASSWORD = "williamshomesgoa_2526";
+const STORAGE_KEY = "wh_admin_auth";
 
 const consultationStatusColors: Record<ConsultationStatus, string> = {
   [ConsultationStatus.pending]: "bg-amber-100 text-amber-800 border-amber-200",
@@ -292,135 +303,126 @@ function MaintenanceTable({ signUps }: { signUps: MaintenanceSignUp[] }) {
 }
 
 export function AdminPage() {
-  const { login, clear, isLoggingIn, identity } = useInternetIdentity();
-  const {
-    data: isAdmin,
-    isLoading: isCheckingAdmin,
-    refetch: refetchIsAdmin,
-  } = useIsAdmin();
-  const initAccess = useInitializeAccess();
-  const hasRegistered = useRef(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
+    () => localStorage.getItem(STORAGE_KEY) === ADMIN_PASSWORD,
+  );
+  const [passwordInput, setPasswordInput] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const { identity, login, isLoggingIn, isInitializing } =
+    useInternetIdentity();
+  const isIILoggedIn = !!identity;
 
   const {
     data: consultations = [],
     isLoading: loadingConsultations,
+    error: consultationsError,
     refetch: refetchConsultations,
   } = useAllConsultations();
   const {
     data: maintenanceSignUps = [],
     isLoading: loadingMaintenance,
+    error: maintenanceError,
     refetch: refetchMaintenance,
   } = useAllMaintenanceSignUps();
 
-  // Auto-register user when identity is available — first visitor becomes admin automatically
-  useEffect(() => {
-    if (identity && !hasRegistered.current && initAccess.status === "idle") {
-      hasRegistered.current = true;
-      initAccess.mutate("", {
-        onSuccess: (isNowAdmin) => {
-          if (isNowAdmin) {
-            toast.success(
-              "Admin access granted! Welcome to Williams Homes dashboard.",
-            );
-          }
-          void refetchIsAdmin();
-        },
-        onError: () => {
-          // Silently fail — user might already be registered
-          void refetchIsAdmin();
-        },
-      });
+  const handleLogin = () => {
+    if (passwordInput === ADMIN_PASSWORD) {
+      localStorage.setItem(STORAGE_KEY, ADMIN_PASSWORD);
+      setIsAuthenticated(true);
+      setPasswordError(false);
+      toast.success("Welcome to the Williams Homes admin dashboard!");
+    } else {
+      setPasswordError(true);
     }
-  }, [identity, initAccess, refetchIsAdmin]);
+  };
+
+  const handleSignOut = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    setIsAuthenticated(false);
+    setPasswordInput("");
+    setPasswordError(false);
+  };
 
   const handleRefresh = () => {
     void refetchConsultations();
     void refetchMaintenance();
   };
 
-  // Not logged in
-  if (!identity) {
+  // Password login screen
+  if (!isAuthenticated) {
     return (
       <main className="min-h-screen bg-background flex items-center justify-center px-4 pt-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-center max-w-md"
+          className="w-full max-w-sm"
         >
-          <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
-            <Shield className="w-8 h-8 text-primary" />
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
+              <Shield className="w-8 h-8 text-primary" />
+            </div>
+            <h1 className="font-display text-3xl font-semibold text-foreground mb-2">
+              Admin Access
+            </h1>
+            <p className="font-body text-muted-foreground leading-relaxed text-sm">
+              Enter the admin password to access the dashboard
+            </p>
           </div>
-          <h1 className="font-display text-3xl font-semibold text-foreground mb-3">
-            Admin Access
-          </h1>
-          <p className="font-body text-muted-foreground mb-8 leading-relaxed">
-            Please log in to access the admin dashboard. Only the registered
-            owner can view booking and sign-up data.
-          </p>
-          <Button
-            onClick={login}
-            disabled={isLoggingIn}
-            size="lg"
-            className="bg-primary text-primary-foreground hover:bg-primary/90 font-heading font-semibold"
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleLogin();
+            }}
+            className="space-y-4"
           >
-            {isLoggingIn ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Signing in...
-              </>
-            ) : (
-              "Sign In"
+            <div className="relative">
+              <Input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter password"
+                value={passwordInput}
+                onChange={(e) => {
+                  setPasswordInput(e.target.value);
+                  setPasswordError(false);
+                }}
+                className={`font-body pr-10 ${passwordError ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                autoFocus
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
+              </button>
+            </div>
+
+            {passwordError && (
+              <motion.p
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="font-body text-sm text-destructive"
+              >
+                Incorrect password. Please try again.
+              </motion.p>
             )}
-          </Button>
-        </motion.div>
-      </main>
-    );
-  }
 
-  // Checking admin status or registering user
-  if (isCheckingAdmin || initAccess.isPending) {
-    return (
-      <main className="min-h-screen bg-background flex items-center justify-center pt-20">
-        <div className="text-center">
-          <Loader2 className="w-8 h-8 text-accent animate-spin mx-auto mb-3" />
-          <p className="font-body text-muted-foreground">
-            {initAccess.isPending
-              ? "Registering account…"
-              : "Checking admin access..."}
-          </p>
-        </div>
-      </main>
-    );
-  }
-
-  // Access denied — simple restricted message for non-admin visitors
-  if (!isAdmin) {
-    return (
-      <main className="min-h-screen bg-background flex items-center justify-center px-4 pt-20 pb-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="max-w-sm w-full text-center"
-        >
-          <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center mx-auto mb-6">
-            <Shield className="w-8 h-8 text-destructive" />
-          </div>
-          <h1 className="font-display text-3xl font-semibold text-foreground mb-3">
-            Access Denied
-          </h1>
-          <p className="font-body text-muted-foreground leading-relaxed mb-8">
-            This area is restricted to the site owner. Please sign in with the
-            correct account to access the admin dashboard.
-          </p>
-          <Button
-            variant="outline"
-            onClick={clear}
-            className="font-heading font-semibold w-full"
-          >
-            Sign Out / Try Different Account
-          </Button>
+            <Button
+              type="submit"
+              size="lg"
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-heading font-semibold"
+            >
+              Login
+            </Button>
+          </form>
         </motion.div>
       </main>
     );
@@ -464,11 +466,60 @@ export function AdminPage() {
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent/15 border border-accent/25">
                 <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
                 <span className="font-heading text-xs text-accent font-medium">
-                  Admin: {identity.getPrincipal().toString().slice(0, 12)}...
+                  Admin: Williams Homes
                 </span>
               </div>
+              <Button
+                onClick={handleSignOut}
+                variant="outline"
+                size="sm"
+                className="border-white/20 text-primary-foreground hover:bg-white/10 font-heading"
+              >
+                <LogOut className="mr-2 h-3.5 w-3.5" />
+                Sign Out
+              </Button>
             </div>
           </motion.div>
+
+          {/* Internet Identity login notice */}
+          {!isIILoggedIn && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.05 }}
+              className="mt-6 flex items-start gap-3 p-4 rounded-xl bg-amber-500/15 border border-amber-400/30"
+            >
+              <AlertCircle className="w-5 h-5 text-amber-300 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="font-heading font-semibold text-sm text-amber-200 mb-1">
+                  Internet Identity login required to view bookings
+                </p>
+                <p className="font-body text-xs text-amber-200/70 mb-3">
+                  The backend requires you to be logged in with Internet
+                  Identity (ICP) to fetch data. Click below to connect your
+                  identity.
+                </p>
+                <Button
+                  onClick={login}
+                  disabled={isLoggingIn || isInitializing}
+                  size="sm"
+                  className="bg-amber-400 text-amber-900 hover:bg-amber-300 font-heading font-semibold"
+                >
+                  {isLoggingIn ? (
+                    <>
+                      <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
+                      Connecting...
+                    </>
+                  ) : (
+                    <>
+                      <LogIn className="mr-2 h-3.5 w-3.5" />
+                      Login with Internet Identity
+                    </>
+                  )}
+                </Button>
+              </div>
+            </motion.div>
+          )}
 
           {/* Summary stats */}
           <motion.div
@@ -547,6 +598,28 @@ export function AdminPage() {
                     Loading consultations...
                   </span>
                 </div>
+              ) : consultationsError ? (
+                <div className="flex flex-col items-center justify-center py-16 gap-3 text-center">
+                  <AlertCircle className="w-10 h-10 text-amber-500 opacity-70" />
+                  <p className="font-heading font-semibold text-foreground">
+                    Could not load bookings
+                  </p>
+                  <p className="font-body text-sm text-muted-foreground max-w-sm">
+                    {isIILoggedIn
+                      ? "Your Internet Identity may not have admin permissions. Open this app from your Caffeine dashboard to get admin access."
+                      : "You need to login with Internet Identity above to view bookings."}
+                  </p>
+                  {!isIILoggedIn && (
+                    <Button
+                      onClick={login}
+                      size="sm"
+                      className="mt-2 font-heading font-semibold"
+                    >
+                      <LogIn className="mr-2 h-3.5 w-3.5" />
+                      Login with Internet Identity
+                    </Button>
+                  )}
+                </div>
               ) : (
                 <ConsultationsTable bookings={consultations} />
               )}
@@ -559,6 +632,28 @@ export function AdminPage() {
                   <span className="font-body text-muted-foreground">
                     Loading sign-ups...
                   </span>
+                </div>
+              ) : maintenanceError ? (
+                <div className="flex flex-col items-center justify-center py-16 gap-3 text-center">
+                  <AlertCircle className="w-10 h-10 text-amber-500 opacity-70" />
+                  <p className="font-heading font-semibold text-foreground">
+                    Could not load maintenance requests
+                  </p>
+                  <p className="font-body text-sm text-muted-foreground max-w-sm">
+                    {isIILoggedIn
+                      ? "Your Internet Identity may not have admin permissions. Open this app from your Caffeine dashboard to get admin access."
+                      : "You need to login with Internet Identity above to view requests."}
+                  </p>
+                  {!isIILoggedIn && (
+                    <Button
+                      onClick={login}
+                      size="sm"
+                      className="mt-2 font-heading font-semibold"
+                    >
+                      <LogIn className="mr-2 h-3.5 w-3.5" />
+                      Login with Internet Identity
+                    </Button>
+                  )}
                 </div>
               ) : (
                 <MaintenanceTable signUps={maintenanceSignUps} />

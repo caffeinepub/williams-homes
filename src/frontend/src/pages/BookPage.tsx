@@ -150,7 +150,7 @@ export function BookPage() {
         className="relative bg-primary pt-32 pb-16"
         style={{
           backgroundImage:
-            "url(/assets/generated/goa-neighborhood.dim_800x600.jpg)",
+            "url(/assets/generated/goa-consultancy-river.dim_1600x700.jpg)",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -209,9 +209,9 @@ export function BookPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="lg:col-span-2"
+            className="lg:col-span-2 space-y-8"
           >
-            <Card className="shadow-card border-border">
+            <Card className="shadow-card border-border" id="booking-form">
               <CardContent className="p-8">
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Name + Email row */}
@@ -400,6 +400,43 @@ export function BookPage() {
                 </form>
               </CardContent>
             </Card>
+          </motion.div>
+
+          {/* Goa Photo Strip — below form */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="lg:col-span-2"
+          >
+            <div className="text-center mb-4">
+              <p className="font-heading text-xs uppercase tracking-widest text-accent font-semibold">
+                Our Beautiful Goa
+              </p>
+            </div>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="rounded-xl overflow-hidden shadow-card group aspect-video">
+                <img
+                  src="/assets/generated/goa-consultancy-river.dim_1600x700.jpg"
+                  alt="Goa river and palm-lined consultancy landscape"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+              <div className="rounded-xl overflow-hidden shadow-card group aspect-video">
+                <img
+                  src="/assets/generated/goa-villa-property.dim_800x600.jpg"
+                  alt="Beautiful Portuguese-colonial Goa villa"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+              <div className="rounded-xl overflow-hidden shadow-card group aspect-video">
+                <img
+                  src="/assets/generated/goa-bougainvillea.dim_800x500.jpg"
+                  alt="Vibrant bougainvillea blooms on a Goan wall"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+            </div>
           </motion.div>
 
           {/* Sidebar Info */}

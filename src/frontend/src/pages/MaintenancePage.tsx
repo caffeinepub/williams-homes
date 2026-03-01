@@ -126,7 +126,7 @@ export function MaintenancePage() {
         className="relative bg-primary pt-32 pb-16"
         style={{
           backgroundImage:
-            "url(/assets/generated/goa-villa-property.dim_800x600.jpg)",
+            "url(/assets/generated/goa-property-booking.dim_1600x700.jpg)",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -385,6 +385,41 @@ export function MaintenancePage() {
                 </form>
               </CardContent>
             </Card>
+          </motion.div>
+
+          {/* Goa Photo Section — below form */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.45 }}
+            className="mt-10"
+          >
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div className="rounded-2xl overflow-hidden shadow-card group relative">
+                <img
+                  src="/assets/generated/goa-property-booking.dim_1600x700.jpg"
+                  alt="Luxury Goa villa property with garden and pool"
+                  className="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/60 to-transparent flex items-end p-4">
+                  <p className="font-heading text-xs text-white/90 uppercase tracking-wide font-semibold">
+                    Properties, Goa
+                  </p>
+                </div>
+              </div>
+              <div className="rounded-2xl overflow-hidden shadow-card group relative">
+                <img
+                  src="/assets/generated/goa-backwaters.dim_800x600.jpg"
+                  alt="Serene Goa backwaters with lush greenery"
+                  className="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/60 to-transparent flex items-end p-4">
+                  <p className="font-heading text-xs text-white/90 uppercase tracking-wide font-semibold">
+                    Goa Backwaters &amp; Estates
+                  </p>
+                </div>
+              </div>
+            </div>
           </motion.div>
         </div>
       </div>

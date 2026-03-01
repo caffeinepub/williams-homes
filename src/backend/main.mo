@@ -8,6 +8,8 @@ import Array "mo:core/Array";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 
+
+
 actor {
   type ConsultationType = {
     #propertyAssessment;

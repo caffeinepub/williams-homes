@@ -61,18 +61,24 @@ const testimonials = [
     role: "NRI Property Owner, Dubai",
     text: "Williams Homes gave me complete peace of mind. They manage my Calangute villa like their own. Highly recommended for NRIs.",
     stars: 5,
+    photo: "/assets/generated/goa-villa-property.dim_800x600.jpg",
+    photoAlt: "Portuguese-colonial Goa villa like Priya's property",
   },
   {
     name: "Rajan Nair",
     role: "Property Investor, Mumbai",
     text: "Professional, reliable, and based right in Siolim. They sent a detailed quote within hours and the service exceeded expectations.",
     stars: 5,
+    photo: "/assets/generated/goa-neighborhood.dim_800x600.jpg",
+    photoAlt: "Goa traditional neighborhood street",
   },
   {
     name: "Sandra D'Souza",
     role: "Homeowner, Goa",
     text: "Finally a local team that truly understands Goa properties — the humidity, monsoons, and all. Excellent work throughout.",
     stars: 5,
+    photo: "/assets/generated/goa-bougainvillea.dim_800x500.jpg",
+    photoAlt: "Beautiful bougainvillea on a Goan wall",
   },
 ];
 
@@ -102,7 +108,7 @@ export function HomePage() {
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage:
-              "url(/assets/generated/goa-hero-beach.dim_1400x700.jpg)",
+              "url(/assets/generated/siolim-church-hero.dim_1600x900.jpg)",
           }}
         />
         {/* Overlay */}
@@ -508,6 +514,66 @@ export function HomePage() {
         </div>
       </section>
 
+      {/* Atmospheric Goa Banner — between Areas and Gallery */}
+      <motion.section
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, margin: "-60px" }}
+        transition={{ duration: 0.8 }}
+        className="relative h-64 sm:h-80 overflow-hidden"
+        style={{
+          backgroundImage:
+            "url(/assets/generated/siolim-church-hero.dim_1600x900.jpg)",
+          backgroundAttachment: "fixed",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        {/* Dark gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/75 via-primary/50 to-transparent" />
+        {/* Content */}
+        <div className="relative z-10 h-full flex items-center">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.p
+              initial={{ opacity: 0, x: -24 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{
+                duration: 0.7,
+                delay: 0.2,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              className="font-heading text-xs uppercase tracking-widest text-accent font-semibold mb-3"
+            >
+              Goa, India
+            </motion.p>
+            <motion.h2
+              initial={{ opacity: 0, x: -28 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{
+                duration: 0.7,
+                delay: 0.3,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              className="font-display text-3xl sm:text-4xl lg:text-5xl font-semibold text-white max-w-lg leading-tight"
+            >
+              Experience the beauty of Goa
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.4 }}
+              className="font-body text-white/70 mt-3 max-w-sm"
+            >
+              Sun-drenched coastlines, colonial heritage, and lush green
+              landscapes — worth every bit of protection.
+            </motion.p>
+          </div>
+        </div>
+      </motion.section>
+
       {/* Goa Photo Gallery */}
       <section className="py-20 bg-secondary/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -552,8 +618,8 @@ export function HomePage() {
             {/* Large hero image spanning 2 cols & 2 rows */}
             <div className="col-span-2 row-span-2 rounded-2xl overflow-hidden shadow-card group">
               <img
-                src="/assets/generated/goa-hero-beach.dim_1400x700.jpg"
-                alt="Goa beach coastline"
+                src="/assets/generated/siolim-church-hero.dim_1600x900.jpg"
+                alt="Siolim Church, Goa"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 style={{ minHeight: "260px" }}
               />
@@ -632,8 +698,18 @@ export function HomePage() {
                 viewport={{ once: true, margin: "-60px" }}
                 custom={i}
                 variants={fadeUp}
+                className="group"
               >
-                <Card className="h-full shadow-card hover:shadow-elevated transition-shadow duration-300 border-border">
+                <Card className="h-full shadow-card hover:shadow-elevated transition-shadow duration-300 border-border overflow-hidden">
+                  {/* Decorative photo thumbnail at top of card */}
+                  <div className="relative h-32 overflow-hidden">
+                    <img
+                      src={t.photo}
+                      alt={t.photoAlt}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-card/80" />
+                  </div>
                   <CardContent className="p-8">
                     <div className="flex gap-0.5 mb-5">
                       {Array.from({ length: t.stars }, (_, j) => (
@@ -647,7 +723,7 @@ export function HomePage() {
                       "{t.text}"
                     </blockquote>
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-accent/15 flex items-center justify-center font-heading font-bold text-accent text-sm">
+                      <div className="w-10 h-10 rounded-full bg-accent/15 flex items-center justify-center font-heading font-bold text-accent text-sm flex-shrink-0">
                         {t.name.charAt(0)}
                       </div>
                       <div>

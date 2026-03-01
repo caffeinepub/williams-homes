@@ -27,25 +27,47 @@ export function useIsAdmin() {
 
 export function useAllConsultations() {
   const { actor, isFetching } = useActor();
-  return useQuery<ConsultationBooking[]>({
+  return useQuery<ConsultationBooking[], Error>({
     queryKey: ["consultations"],
     queryFn: async () => {
-      if (!actor) return [];
-      return actor.getAllConsultations();
+      if (!actor) throw new Error("Backend not connected");
+      try {
+        return await actor.getAllConsultations();
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : String(err);
+        if (msg.includes("Unauthorized") || msg.includes("rejected")) {
+          throw new Error(
+            "Backend authorization error: not logged in as admin via Internet Identity",
+          );
+        }
+        throw new Error(msg);
+      }
     },
     enabled: !!actor && !isFetching,
+    retry: false,
   });
 }
 
 export function useAllMaintenanceSignUps() {
   const { actor, isFetching } = useActor();
-  return useQuery<MaintenanceSignUp[]>({
+  return useQuery<MaintenanceSignUp[], Error>({
     queryKey: ["maintenanceSignUps"],
     queryFn: async () => {
-      if (!actor) return [];
-      return actor.getAllMaintenanceSignUps();
+      if (!actor) throw new Error("Backend not connected");
+      try {
+        return await actor.getAllMaintenanceSignUps();
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : String(err);
+        if (msg.includes("Unauthorized") || msg.includes("rejected")) {
+          throw new Error(
+            "Backend authorization error: not logged in as admin via Internet Identity",
+          );
+        }
+        throw new Error(msg);
+      }
     },
     enabled: !!actor && !isFetching,
+    retry: false,
   });
 }
 
@@ -66,29 +88,24 @@ export function useSubmitConsultation() {
       }
     >({
       mutationFn: async (data) => {
-        // Try to get actor from cache if not available yet
+        // Wait up to 15 seconds for actor to be available
         let resolvedActor = actor;
         if (!resolvedActor) {
-          // Wait up to 8 seconds for actor to initialize
-          for (let i = 0; i < 16; i++) {
+          for (let i = 0; i < 30; i++) {
             await new Promise((r) => setTimeout(r, 500));
-            const cached =
-              queryClient.getQueryData<import("../backend").backendInterface>([
-                "actor",
-                undefined,
-              ]) ??
-              queryClient.getQueriesData<import("../backend").backendInterface>(
-                { queryKey: ["actor"] },
-              )[0]?.[1];
-            if (cached) {
-              resolvedActor = cached;
+            const entries = queryClient.getQueriesData<
+              import("../backend").backendInterface
+            >({ queryKey: ["actor"] });
+            const found = entries.map(([, v]) => v).find((v) => v != null);
+            if (found) {
+              resolvedActor = found;
               break;
             }
           }
         }
         if (!resolvedActor)
           throw new Error(
-            "Could not connect to the backend. Please refresh the page and try again.",
+            "Could not connect to the backend. Please refresh and try again.",
           );
         return resolvedActor.submitConsultationBooking(
           data.name,
@@ -124,29 +141,24 @@ export function useSubmitMaintenance() {
       }
     >({
       mutationFn: async (data) => {
-        // Try to get actor from cache if not available yet
+        // Wait up to 15 seconds for actor to be available
         let resolvedActor = actor;
         if (!resolvedActor) {
-          // Wait up to 8 seconds for actor to initialize
-          for (let i = 0; i < 16; i++) {
+          for (let i = 0; i < 30; i++) {
             await new Promise((r) => setTimeout(r, 500));
-            const cached =
-              queryClient.getQueryData<import("../backend").backendInterface>([
-                "actor",
-                undefined,
-              ]) ??
-              queryClient.getQueriesData<import("../backend").backendInterface>(
-                { queryKey: ["actor"] },
-              )[0]?.[1];
-            if (cached) {
-              resolvedActor = cached;
+            const entries = queryClient.getQueriesData<
+              import("../backend").backendInterface
+            >({ queryKey: ["actor"] });
+            const found = entries.map(([, v]) => v).find((v) => v != null);
+            if (found) {
+              resolvedActor = found;
               break;
             }
           }
         }
         if (!resolvedActor)
           throw new Error(
-            "Could not connect to the backend. Please refresh the page and try again.",
+            "Could not connect to the backend. Please refresh and try again.",
           );
         return resolvedActor.submitMaintenanceSignUp(
           data.name,
@@ -212,9 +224,27 @@ export function useInitializeAccess() {
   const queryClient = useQueryClient();
   return useMutation<boolean, Error, string>({
     mutationFn: async (token: string) => {
-      if (!actor) throw new Error("Actor not available");
-      await actor._initializeAccessControlWithSecret(token);
-      return actor.isCallerAdmin();
+      // Wait up to 15 seconds for actor to be available
+      let resolvedActor = actor;
+      if (!resolvedActor) {
+        for (let i = 0; i < 30; i++) {
+          await new Promise((r) => setTimeout(r, 500));
+          const entries = queryClient.getQueriesData<
+            import("../backend").backendInterface
+          >({
+            queryKey: ["actor"],
+          });
+          const found = entries.map(([, v]) => v).find((v) => v != null);
+          if (found) {
+            resolvedActor = found;
+            break;
+          }
+        }
+      }
+      if (!resolvedActor) throw new Error("Actor not available");
+      // Call initialize to register/upgrade the user with the provided token
+      await resolvedActor._initializeAccessControlWithSecret(token);
+      return resolvedActor.isCallerAdmin();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["isAdmin"] });
