@@ -50,67 +50,119 @@ export function useAllMaintenanceSignUps() {
 }
 
 export function useSubmitConsultation() {
-  const { actor } = useActor();
+  const { actor, isFetching } = useActor();
   const queryClient = useQueryClient();
-  return useMutation<
-    bigint,
-    Error,
-    {
-      name: string;
-      email: string;
-      phone: string;
-      preferredDate: string;
-      consultationType: ConsultationType;
-      message: string | null;
-    }
-  >({
-    mutationFn: async (data) => {
-      if (!actor) throw new Error("Actor not available");
-      return actor.submitConsultationBooking(
-        data.name,
-        data.email,
-        data.phone,
-        data.preferredDate,
-        data.consultationType,
-        data.message,
-      );
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["consultations"] });
-    },
-  });
+  return {
+    ...useMutation<
+      bigint,
+      Error,
+      {
+        name: string;
+        email: string;
+        phone: string;
+        preferredDate: string;
+        consultationType: ConsultationType;
+        message: string | null;
+      }
+    >({
+      mutationFn: async (data) => {
+        // Try to get actor from cache if not available yet
+        let resolvedActor = actor;
+        if (!resolvedActor) {
+          // Wait up to 8 seconds for actor to initialize
+          for (let i = 0; i < 16; i++) {
+            await new Promise((r) => setTimeout(r, 500));
+            const cached =
+              queryClient.getQueryData<import("../backend").backendInterface>([
+                "actor",
+                undefined,
+              ]) ??
+              queryClient.getQueriesData<import("../backend").backendInterface>(
+                { queryKey: ["actor"] },
+              )[0]?.[1];
+            if (cached) {
+              resolvedActor = cached;
+              break;
+            }
+          }
+        }
+        if (!resolvedActor)
+          throw new Error(
+            "Could not connect to the backend. Please refresh the page and try again.",
+          );
+        return resolvedActor.submitConsultationBooking(
+          data.name,
+          data.email,
+          data.phone,
+          data.preferredDate,
+          data.consultationType,
+          data.message,
+        );
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["consultations"] });
+      },
+    }),
+    actorLoading: isFetching,
+  };
 }
 
 export function useSubmitMaintenance() {
-  const { actor } = useActor();
+  const { actor, isFetching } = useActor();
   const queryClient = useQueryClient();
-  return useMutation<
-    bigint,
-    Error,
-    {
-      name: string;
-      email: string;
-      phone: string;
-      propertyAddress: string;
-      propertyType: PropertyType;
-      notes: string | null;
-    }
-  >({
-    mutationFn: async (data) => {
-      if (!actor) throw new Error("Actor not available");
-      return actor.submitMaintenanceSignUp(
-        data.name,
-        data.email,
-        data.phone,
-        data.propertyAddress,
-        data.propertyType,
-        data.notes,
-      );
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["maintenanceSignUps"] });
-    },
-  });
+  return {
+    ...useMutation<
+      bigint,
+      Error,
+      {
+        name: string;
+        email: string;
+        phone: string;
+        propertyAddress: string;
+        propertyType: PropertyType;
+        notes: string | null;
+      }
+    >({
+      mutationFn: async (data) => {
+        // Try to get actor from cache if not available yet
+        let resolvedActor = actor;
+        if (!resolvedActor) {
+          // Wait up to 8 seconds for actor to initialize
+          for (let i = 0; i < 16; i++) {
+            await new Promise((r) => setTimeout(r, 500));
+            const cached =
+              queryClient.getQueryData<import("../backend").backendInterface>([
+                "actor",
+                undefined,
+              ]) ??
+              queryClient.getQueriesData<import("../backend").backendInterface>(
+                { queryKey: ["actor"] },
+              )[0]?.[1];
+            if (cached) {
+              resolvedActor = cached;
+              break;
+            }
+          }
+        }
+        if (!resolvedActor)
+          throw new Error(
+            "Could not connect to the backend. Please refresh the page and try again.",
+          );
+        return resolvedActor.submitMaintenanceSignUp(
+          data.name,
+          data.email,
+          data.phone,
+          data.propertyAddress,
+          data.propertyType,
+          data.notes,
+        );
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["maintenanceSignUps"] });
+      },
+    }),
+    actorLoading: isFetching,
+  };
 }
 
 export function useUpdateConsultationStatus() {

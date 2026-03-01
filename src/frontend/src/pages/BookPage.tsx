@@ -68,7 +68,7 @@ export function BookPage() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
-  const { mutate, isPending } = useSubmitConsultation();
+  const { mutate, isPending, actorLoading } = useSubmitConsultation();
 
   const handleChange = (field: keyof FormState, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -373,13 +373,20 @@ export function BookPage() {
 
                   <Button
                     type="submit"
-                    disabled={isPending || !form.consultationType}
+                    disabled={
+                      isPending || actorLoading || !form.consultationType
+                    }
                     className="w-full bg-accent text-accent-foreground hover:bg-accent/90 font-heading font-semibold text-base h-12 shadow-glow"
                   >
                     {isPending ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         Submitting...
+                      </>
+                    ) : actorLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Connecting...
                       </>
                     ) : (
                       "Book Consultation"

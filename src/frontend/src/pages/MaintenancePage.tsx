@@ -47,7 +47,7 @@ export function MaintenancePage() {
     notes: "",
   });
   const [submitted, setSubmitted] = useState(false);
-  const { mutate, isPending } = useSubmitMaintenance();
+  const { mutate, isPending, actorLoading } = useSubmitMaintenance();
 
   const handleChange = (field: keyof FormState, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -357,13 +357,18 @@ export function MaintenancePage() {
 
                   <Button
                     type="submit"
-                    disabled={isPending || !form.propertyType}
+                    disabled={isPending || actorLoading || !form.propertyType}
                     className="w-full bg-accent text-accent-foreground hover:bg-accent/90 font-heading font-semibold text-base h-12 shadow-glow"
                   >
                     {isPending ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         Submitting...
+                      </>
+                    ) : actorLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Connecting...
                       </>
                     ) : (
                       <>
