@@ -67,7 +67,7 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2.5 text-primary-foreground/65 text-sm font-body">
                 <Mail className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
-                hello@williamshomes.com
+                williamshomesgoa@gmail.com
               </li>
               <li className="flex items-start gap-2.5 text-primary-foreground/65 text-sm font-body">
                 <MapPin className="w-3.5 h-3.5 flex-shrink-0 text-accent mt-0.5" />

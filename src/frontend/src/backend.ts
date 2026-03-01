@@ -108,7 +108,7 @@ export interface MaintenanceSignUp {
     createdAt: bigint;
     propertyAddress: string;
     email: string;
-    maintenancePlan: MaintenancePlan;
+    notes?: string;
     phone: string;
 }
 export interface UserProfile {
@@ -124,11 +124,6 @@ export enum ConsultationType {
     investmentAdvice = "investmentAdvice",
     propertyAssessment = "propertyAssessment",
     generalInquiry = "generalInquiry"
-}
-export enum MaintenancePlan {
-    premium = "premium",
-    basic = "basic",
-    standard = "standard"
 }
 export enum MaintenanceStatus {
     active = "active",
@@ -156,11 +151,11 @@ export interface backendInterface {
     isCallerAdmin(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     submitConsultationBooking(name: string, email: string, phone: string, preferredDate: string, consultationType: ConsultationType, message: string | null): Promise<bigint>;
-    submitMaintenanceSignUp(name: string, email: string, phone: string, propertyAddress: string, propertyType: PropertyType, maintenancePlan: MaintenancePlan): Promise<bigint>;
+    submitMaintenanceSignUp(name: string, email: string, phone: string, propertyAddress: string, propertyType: PropertyType, notes: string | null): Promise<bigint>;
     updateConsultationStatus(id: bigint, status: ConsultationStatus): Promise<void>;
     updateMaintenanceStatus(id: bigint, status: MaintenanceStatus): Promise<void>;
 }
-import type { ConsultationBooking as _ConsultationBooking, ConsultationStatus as _ConsultationStatus, ConsultationType as _ConsultationType, MaintenancePlan as _MaintenancePlan, MaintenanceSignUp as _MaintenanceSignUp, MaintenanceStatus as _MaintenanceStatus, PropertyType as _PropertyType, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
+import type { ConsultationBooking as _ConsultationBooking, ConsultationStatus as _ConsultationStatus, ConsultationType as _ConsultationType, MaintenanceSignUp as _MaintenanceSignUp, MaintenanceStatus as _MaintenanceStatus, PropertyType as _PropertyType, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async _initializeAccessControlWithSecret(arg0: string): Promise<void> {
@@ -223,42 +218,42 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getCallerUserProfile();
-                return from_candid_opt_n20(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n18(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getCallerUserProfile();
-            return from_candid_opt_n20(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n18(this._uploadFile, this._downloadFile, result);
         }
     }
     async getCallerUserRole(): Promise<UserRole> {
         if (this.processError) {
             try {
                 const result = await this.actor.getCallerUserRole();
-                return from_candid_UserRole_n21(this._uploadFile, this._downloadFile, result);
+                return from_candid_UserRole_n19(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getCallerUserRole();
-            return from_candid_UserRole_n21(this._uploadFile, this._downloadFile, result);
+            return from_candid_UserRole_n19(this._uploadFile, this._downloadFile, result);
         }
     }
     async getUserProfile(arg0: Principal): Promise<UserProfile | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getUserProfile(arg0);
-                return from_candid_opt_n20(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n18(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getUserProfile(arg0);
-            return from_candid_opt_n20(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n18(this._uploadFile, this._downloadFile, result);
         }
     }
     async isCallerAdmin(): Promise<boolean> {
@@ -292,56 +287,56 @@ export class Backend implements backendInterface {
     async submitConsultationBooking(arg0: string, arg1: string, arg2: string, arg3: string, arg4: ConsultationType, arg5: string | null): Promise<bigint> {
         if (this.processError) {
             try {
-                const result = await this.actor.submitConsultationBooking(arg0, arg1, arg2, arg3, to_candid_ConsultationType_n23(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n25(this._uploadFile, this._downloadFile, arg5));
+                const result = await this.actor.submitConsultationBooking(arg0, arg1, arg2, arg3, to_candid_ConsultationType_n21(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n23(this._uploadFile, this._downloadFile, arg5));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.submitConsultationBooking(arg0, arg1, arg2, arg3, to_candid_ConsultationType_n23(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n25(this._uploadFile, this._downloadFile, arg5));
+            const result = await this.actor.submitConsultationBooking(arg0, arg1, arg2, arg3, to_candid_ConsultationType_n21(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n23(this._uploadFile, this._downloadFile, arg5));
             return result;
         }
     }
-    async submitMaintenanceSignUp(arg0: string, arg1: string, arg2: string, arg3: string, arg4: PropertyType, arg5: MaintenancePlan): Promise<bigint> {
+    async submitMaintenanceSignUp(arg0: string, arg1: string, arg2: string, arg3: string, arg4: PropertyType, arg5: string | null): Promise<bigint> {
         if (this.processError) {
             try {
-                const result = await this.actor.submitMaintenanceSignUp(arg0, arg1, arg2, arg3, to_candid_PropertyType_n26(this._uploadFile, this._downloadFile, arg4), to_candid_MaintenancePlan_n28(this._uploadFile, this._downloadFile, arg5));
+                const result = await this.actor.submitMaintenanceSignUp(arg0, arg1, arg2, arg3, to_candid_PropertyType_n24(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n23(this._uploadFile, this._downloadFile, arg5));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.submitMaintenanceSignUp(arg0, arg1, arg2, arg3, to_candid_PropertyType_n26(this._uploadFile, this._downloadFile, arg4), to_candid_MaintenancePlan_n28(this._uploadFile, this._downloadFile, arg5));
+            const result = await this.actor.submitMaintenanceSignUp(arg0, arg1, arg2, arg3, to_candid_PropertyType_n24(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n23(this._uploadFile, this._downloadFile, arg5));
             return result;
         }
     }
     async updateConsultationStatus(arg0: bigint, arg1: ConsultationStatus): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.updateConsultationStatus(arg0, to_candid_ConsultationStatus_n30(this._uploadFile, this._downloadFile, arg1));
+                const result = await this.actor.updateConsultationStatus(arg0, to_candid_ConsultationStatus_n26(this._uploadFile, this._downloadFile, arg1));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updateConsultationStatus(arg0, to_candid_ConsultationStatus_n30(this._uploadFile, this._downloadFile, arg1));
+            const result = await this.actor.updateConsultationStatus(arg0, to_candid_ConsultationStatus_n26(this._uploadFile, this._downloadFile, arg1));
             return result;
         }
     }
     async updateMaintenanceStatus(arg0: bigint, arg1: MaintenanceStatus): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.updateMaintenanceStatus(arg0, to_candid_MaintenanceStatus_n32(this._uploadFile, this._downloadFile, arg1));
+                const result = await this.actor.updateMaintenanceStatus(arg0, to_candid_MaintenanceStatus_n28(this._uploadFile, this._downloadFile, arg1));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updateMaintenanceStatus(arg0, to_candid_MaintenanceStatus_n32(this._uploadFile, this._downloadFile, arg1));
+            const result = await this.actor.updateMaintenanceStatus(arg0, to_candid_MaintenanceStatus_n28(this._uploadFile, this._downloadFile, arg1));
             return result;
         }
     }
@@ -355,9 +350,6 @@ function from_candid_ConsultationStatus_n6(_uploadFile: (file: ExternalBlob) => 
 function from_candid_ConsultationType_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _ConsultationType): ConsultationType {
     return from_candid_variant_n10(_uploadFile, _downloadFile, value);
 }
-function from_candid_MaintenancePlan_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _MaintenancePlan): MaintenancePlan {
-    return from_candid_variant_n19(_uploadFile, _downloadFile, value);
-}
 function from_candid_MaintenanceSignUp_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _MaintenanceSignUp): MaintenanceSignUp {
     return from_candid_record_n13(_uploadFile, _downloadFile, value);
 }
@@ -367,10 +359,10 @@ function from_candid_MaintenanceStatus_n14(_uploadFile: (file: ExternalBlob) => 
 function from_candid_PropertyType_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _PropertyType): PropertyType {
     return from_candid_variant_n17(_uploadFile, _downloadFile, value);
 }
-function from_candid_UserRole_n21(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
-    return from_candid_variant_n22(_uploadFile, _downloadFile, value);
+function from_candid_UserRole_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
+    return from_candid_variant_n20(_uploadFile, _downloadFile, value);
 }
-function from_candid_opt_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
+function from_candid_opt_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
     return value.length === 0 ? null : value[0];
 }
 function from_candid_opt_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [string]): string | null {
@@ -384,7 +376,7 @@ function from_candid_record_n13(_uploadFile: (file: ExternalBlob) => Promise<Uin
     createdAt: bigint;
     propertyAddress: string;
     email: string;
-    maintenancePlan: _MaintenancePlan;
+    notes: [] | [string];
     phone: string;
 }): {
     id: bigint;
@@ -394,7 +386,7 @@ function from_candid_record_n13(_uploadFile: (file: ExternalBlob) => Promise<Uin
     createdAt: bigint;
     propertyAddress: string;
     email: string;
-    maintenancePlan: MaintenancePlan;
+    notes?: string;
     phone: string;
 } {
     return {
@@ -405,7 +397,7 @@ function from_candid_record_n13(_uploadFile: (file: ExternalBlob) => Promise<Uin
         createdAt: value.createdAt,
         propertyAddress: value.propertyAddress,
         email: value.email,
-        maintenancePlan: from_candid_MaintenancePlan_n18(_uploadFile, _downloadFile, value.maintenancePlan),
+        notes: record_opt_to_undefined(from_candid_opt_n8(_uploadFile, _downloadFile, value.notes)),
         phone: value.phone
     };
 }
@@ -469,16 +461,7 @@ function from_candid_variant_n17(_uploadFile: (file: ExternalBlob) => Promise<Ui
 }): PropertyType {
     return "commercial" in value ? PropertyType.commercial : "residential" in value ? PropertyType.residential : "industrial" in value ? PropertyType.industrial : value;
 }
-function from_candid_variant_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    premium: null;
-} | {
-    basic: null;
-} | {
-    standard: null;
-}): MaintenancePlan {
-    return "premium" in value ? MaintenancePlan.premium : "basic" in value ? MaintenancePlan.basic : "standard" in value ? MaintenancePlan.standard : value;
-}
-function from_candid_variant_n22(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_variant_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     admin: null;
 } | {
     user: null;
@@ -504,25 +487,22 @@ function from_candid_vec_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8A
 function from_candid_vec_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_ConsultationBooking>): Array<ConsultationBooking> {
     return value.map((x)=>from_candid_ConsultationBooking_n4(_uploadFile, _downloadFile, x));
 }
-function to_candid_ConsultationStatus_n30(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ConsultationStatus): _ConsultationStatus {
-    return to_candid_variant_n31(_uploadFile, _downloadFile, value);
+function to_candid_ConsultationStatus_n26(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ConsultationStatus): _ConsultationStatus {
+    return to_candid_variant_n27(_uploadFile, _downloadFile, value);
 }
-function to_candid_ConsultationType_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ConsultationType): _ConsultationType {
-    return to_candid_variant_n24(_uploadFile, _downloadFile, value);
+function to_candid_ConsultationType_n21(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ConsultationType): _ConsultationType {
+    return to_candid_variant_n22(_uploadFile, _downloadFile, value);
 }
-function to_candid_MaintenancePlan_n28(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: MaintenancePlan): _MaintenancePlan {
+function to_candid_MaintenanceStatus_n28(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: MaintenanceStatus): _MaintenanceStatus {
     return to_candid_variant_n29(_uploadFile, _downloadFile, value);
 }
-function to_candid_MaintenanceStatus_n32(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: MaintenanceStatus): _MaintenanceStatus {
-    return to_candid_variant_n33(_uploadFile, _downloadFile, value);
-}
-function to_candid_PropertyType_n26(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: PropertyType): _PropertyType {
-    return to_candid_variant_n27(_uploadFile, _downloadFile, value);
+function to_candid_PropertyType_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: PropertyType): _PropertyType {
+    return to_candid_variant_n25(_uploadFile, _downloadFile, value);
 }
 function to_candid_UserRole_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): _UserRole {
     return to_candid_variant_n2(_uploadFile, _downloadFile, value);
 }
-function to_candid_opt_n25(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: string | null): [] | [string] {
+function to_candid_opt_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: string | null): [] | [string] {
     return value === null ? candid_none() : candid_some(value);
 }
 function to_candid_variant_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): {
@@ -540,7 +520,7 @@ function to_candid_variant_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8
         guest: null
     } : value;
 }
-function to_candid_variant_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ConsultationType): {
+function to_candid_variant_n22(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ConsultationType): {
     investmentAdvice: null;
 } | {
     propertyAssessment: null;
@@ -555,7 +535,7 @@ function to_candid_variant_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint
         generalInquiry: null
     } : value;
 }
-function to_candid_variant_n27(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: PropertyType): {
+function to_candid_variant_n25(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: PropertyType): {
     commercial: null;
 } | {
     residential: null;
@@ -570,22 +550,7 @@ function to_candid_variant_n27(_uploadFile: (file: ExternalBlob) => Promise<Uint
         industrial: null
     } : value;
 }
-function to_candid_variant_n29(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: MaintenancePlan): {
-    premium: null;
-} | {
-    basic: null;
-} | {
-    standard: null;
-} {
-    return value == MaintenancePlan.premium ? {
-        premium: null
-    } : value == MaintenancePlan.basic ? {
-        basic: null
-    } : value == MaintenancePlan.standard ? {
-        standard: null
-    } : value;
-}
-function to_candid_variant_n31(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ConsultationStatus): {
+function to_candid_variant_n27(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ConsultationStatus): {
     cancelled: null;
 } | {
     pending: null;
@@ -604,7 +569,7 @@ function to_candid_variant_n31(_uploadFile: (file: ExternalBlob) => Promise<Uint
         confirmed: null
     } : value;
 }
-function to_candid_variant_n33(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: MaintenanceStatus): {
+function to_candid_variant_n29(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: MaintenanceStatus): {
     active: null;
 } | {
     cancelled: null;

@@ -1,10 +1,10 @@
 import Map "mo:core/Map";
 import Time "mo:core/Time";
-import Text "mo:core/Text";
-import Nat64 "mo:core/Nat64";
-import Array "mo:core/Array";
 import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
+import Nat "mo:core/Nat";
+import Iter "mo:core/Iter";
+import Array "mo:core/Array";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 
@@ -26,12 +26,6 @@ actor {
     #residential;
     #commercial;
     #industrial;
-  };
-
-  type MaintenancePlan = {
-    #basic;
-    #standard;
-    #premium;
   };
 
   type MaintenanceStatus = {
@@ -59,7 +53,7 @@ actor {
     phone : Text;
     propertyAddress : Text;
     propertyType : PropertyType;
-    maintenancePlan : MaintenancePlan;
+    notes : ?Text;
     status : MaintenanceStatus;
     createdAt : Int;
   };
@@ -68,7 +62,6 @@ actor {
     name : Text;
   };
 
-  // Initialize the access control state
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
 
@@ -78,8 +71,6 @@ actor {
   let consultations = Map.empty<Nat, ConsultationBooking>();
   let maintenanceSignUps = Map.empty<Nat, MaintenanceSignUp>();
   let userProfiles = Map.empty<Principal, UserProfile>();
-
-  // User Profile Functions
 
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
@@ -102,8 +93,6 @@ actor {
     userProfiles.add(caller, profile);
   };
 
-  // Consultation Bookings
-
   public shared ({ caller }) func submitConsultationBooking(
     name : Text,
     email : Text,
@@ -112,7 +101,6 @@ actor {
     consultationType : ConsultationType,
     message : ?Text,
   ) : async Nat {
-    // Any user including guests can submit consultation bookings
     let id = nextConsultationId;
     nextConsultationId += 1;
 
@@ -162,17 +150,14 @@ actor {
     };
   };
 
-  // Property Maintenance Sign-ups
-
   public shared ({ caller }) func submitMaintenanceSignUp(
     name : Text,
     email : Text,
     phone : Text,
     propertyAddress : Text,
     propertyType : PropertyType,
-    maintenancePlan : MaintenancePlan,
+    notes : ?Text,
   ) : async Nat {
-    // Any user including guests can submit maintenance sign-ups
     let id = nextMaintenanceId;
     nextMaintenanceId += 1;
 
@@ -183,7 +168,7 @@ actor {
       phone;
       propertyAddress;
       propertyType;
-      maintenancePlan;
+      notes;
       status = #pending;
       createdAt = Time.now();
     };
@@ -213,7 +198,7 @@ actor {
           phone = signUp.phone;
           propertyAddress = signUp.propertyAddress;
           propertyType = signUp.propertyType;
-          maintenancePlan = signUp.maintenancePlan;
+          notes = signUp.notes;
           status;
           createdAt = signUp.createdAt;
         };

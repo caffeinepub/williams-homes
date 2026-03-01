@@ -28,7 +28,7 @@ const fadeUp: Variants = {
 const stats = [
   { value: "5+", label: "Properties Managed" },
   { value: "98%", label: "Client Satisfaction" },
-  { value: "3 yrs", label: "Industry Experience" },
+  { value: "Since 2022", label: "Industry Experience" },
   { value: "24/7", label: "Emergency Support" },
 ];
 

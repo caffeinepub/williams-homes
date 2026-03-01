@@ -28,9 +28,6 @@ export type ConsultationStatus = { 'cancelled' : null } |
 export type ConsultationType = { 'investmentAdvice' : null } |
   { 'propertyAssessment' : null } |
   { 'generalInquiry' : null };
-export type MaintenancePlan = { 'premium' : null } |
-  { 'basic' : null } |
-  { 'standard' : null };
 export interface MaintenanceSignUp {
   'id' : bigint,
   'status' : MaintenanceStatus,
@@ -39,7 +36,7 @@ export interface MaintenanceSignUp {
   'createdAt' : bigint,
   'propertyAddress' : string,
   'email' : string,
-  'maintenancePlan' : MaintenancePlan,
+  'notes' : [] | [string],
   'phone' : string,
 }
 export type MaintenanceStatus = { 'active' : null } |
@@ -67,7 +64,7 @@ export interface _SERVICE {
     bigint
   >,
   'submitMaintenanceSignUp' : ActorMethod<
-    [string, string, string, string, PropertyType, MaintenancePlan],
+    [string, string, string, string, PropertyType, [] | [string]],
     bigint
   >,
   'updateConsultationStatus' : ActorMethod<

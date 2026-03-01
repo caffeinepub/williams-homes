@@ -45,11 +45,6 @@ export const PropertyType = IDL.Variant({
   'residential' : IDL.Null,
   'industrial' : IDL.Null,
 });
-export const MaintenancePlan = IDL.Variant({
-  'premium' : IDL.Null,
-  'basic' : IDL.Null,
-  'standard' : IDL.Null,
-});
 export const MaintenanceSignUp = IDL.Record({
   'id' : IDL.Nat,
   'status' : MaintenanceStatus,
@@ -58,7 +53,7 @@ export const MaintenanceSignUp = IDL.Record({
   'createdAt' : IDL.Int,
   'propertyAddress' : IDL.Text,
   'email' : IDL.Text,
-  'maintenancePlan' : MaintenancePlan,
+  'notes' : IDL.Opt(IDL.Text),
   'phone' : IDL.Text,
 });
 export const UserProfile = IDL.Record({ 'name' : IDL.Text });
@@ -98,7 +93,7 @@ export const idlService = IDL.Service({
       [],
     ),
   'submitMaintenanceSignUp' : IDL.Func(
-      [IDL.Text, IDL.Text, IDL.Text, IDL.Text, PropertyType, MaintenancePlan],
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text, PropertyType, IDL.Opt(IDL.Text)],
       [IDL.Nat],
       [],
     ),
@@ -146,11 +141,6 @@ export const idlFactory = ({ IDL }) => {
     'residential' : IDL.Null,
     'industrial' : IDL.Null,
   });
-  const MaintenancePlan = IDL.Variant({
-    'premium' : IDL.Null,
-    'basic' : IDL.Null,
-    'standard' : IDL.Null,
-  });
   const MaintenanceSignUp = IDL.Record({
     'id' : IDL.Nat,
     'status' : MaintenanceStatus,
@@ -159,7 +149,7 @@ export const idlFactory = ({ IDL }) => {
     'createdAt' : IDL.Int,
     'propertyAddress' : IDL.Text,
     'email' : IDL.Text,
-    'maintenancePlan' : MaintenancePlan,
+    'notes' : IDL.Opt(IDL.Text),
     'phone' : IDL.Text,
   });
   const UserProfile = IDL.Record({ 'name' : IDL.Text });
@@ -199,7 +189,14 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'submitMaintenanceSignUp' : IDL.Func(
-        [IDL.Text, IDL.Text, IDL.Text, IDL.Text, PropertyType, MaintenancePlan],
+        [
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          PropertyType,
+          IDL.Opt(IDL.Text),
+        ],
         [IDL.Nat],
         [],
       ),

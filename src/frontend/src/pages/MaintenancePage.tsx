@@ -18,7 +18,7 @@ import {
 import { motion } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { MaintenancePlan, PropertyType } from "../backend";
+import { PropertyType } from "../backend";
 
 const propertyTypes = [
   { value: PropertyType.residential, label: "Residential", icon: "🏠" },
@@ -33,7 +33,7 @@ interface FormState {
   propertyAddress: string;
   propertyType: PropertyType | "";
   propertySize: string;
-  additionalInfo: string;
+  notes: string;
 }
 
 export function MaintenancePage() {
@@ -44,7 +44,7 @@ export function MaintenancePage() {
     propertyAddress: "",
     propertyType: "",
     propertySize: "",
-    additionalInfo: "",
+    notes: "",
   });
   const [submitted, setSubmitted] = useState(false);
   const { mutate, isPending } = useSubmitMaintenance();
@@ -64,7 +64,7 @@ export function MaintenancePage() {
         phone: form.phone,
         propertyAddress: form.propertyAddress,
         propertyType: form.propertyType as PropertyType,
-        maintenancePlan: MaintenancePlan.basic,
+        notes: form.notes.trim() || null,
       },
       {
         onSuccess: () => setSubmitted(true),
@@ -328,21 +328,19 @@ export function MaintenancePage() {
                     </div>
                   </div>
 
-                  {/* Additional Info */}
+                  {/* Notes / Special Requirements */}
                   <div className="space-y-2">
                     <Label
-                      htmlFor="additionalInfo"
+                      htmlFor="notes"
                       className="font-heading font-medium text-sm"
                     >
-                      Additional Information
+                      Notes / Special Requirements
                     </Label>
                     <Textarea
-                      id="additionalInfo"
-                      placeholder="Any specific maintenance concerns, current issues, or requirements you'd like us to know about..."
-                      value={form.additionalInfo}
-                      onChange={(e) =>
-                        handleChange("additionalInfo", e.target.value)
-                      }
+                      id="notes"
+                      placeholder="Any specific maintenance concerns, current issues, or special requirements you'd like us to know about..."
+                      value={form.notes}
+                      onChange={(e) => handleChange("notes", e.target.value)}
                       rows={4}
                       className="font-body resize-none"
                     />

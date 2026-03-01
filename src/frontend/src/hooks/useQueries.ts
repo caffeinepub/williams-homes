@@ -3,7 +3,6 @@ import type {
   ConsultationBooking,
   ConsultationStatus,
   ConsultationType,
-  MaintenancePlan,
   MaintenanceSignUp,
   MaintenanceStatus,
   PropertyType,
@@ -16,7 +15,11 @@ export function useIsAdmin() {
     queryKey: ["isAdmin"],
     queryFn: async () => {
       if (!actor) return false;
-      return actor.isCallerAdmin();
+      try {
+        return await actor.isCallerAdmin();
+      } catch {
+        return false;
+      }
     },
     enabled: !!actor && !isFetching,
   });
@@ -90,7 +93,7 @@ export function useSubmitMaintenance() {
       phone: string;
       propertyAddress: string;
       propertyType: PropertyType;
-      maintenancePlan: MaintenancePlan;
+      notes: string | null;
     }
   >({
     mutationFn: async (data) => {
@@ -101,7 +104,7 @@ export function useSubmitMaintenance() {
         data.phone,
         data.propertyAddress,
         data.propertyType,
-        data.maintenancePlan,
+        data.notes,
       );
     },
     onSuccess: () => {
@@ -135,5 +138,17 @@ export function useUpdateMaintenanceStatus() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["maintenanceSignUps"] });
     },
+  });
+}
+
+export function useRegisterUser() {
+  const { actor, isFetching } = useActor();
+  return useQuery<boolean>({
+    queryKey: ["registerUser"],
+    queryFn: async () => {
+      if (!actor) return false;
+      return actor.isCallerAdmin();
+    },
+    enabled: !!actor && !isFetching,
   });
 }

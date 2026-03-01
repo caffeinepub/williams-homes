@@ -26,7 +26,7 @@ export interface MaintenanceSignUp {
     createdAt: bigint;
     propertyAddress: string;
     email: string;
-    maintenancePlan: MaintenancePlan;
+    notes?: string;
     phone: string;
 }
 export interface UserProfile {
@@ -42,11 +42,6 @@ export enum ConsultationType {
     investmentAdvice = "investmentAdvice",
     propertyAssessment = "propertyAssessment",
     generalInquiry = "generalInquiry"
-}
-export enum MaintenancePlan {
-    premium = "premium",
-    basic = "basic",
-    standard = "standard"
 }
 export enum MaintenanceStatus {
     active = "active",
@@ -73,7 +68,7 @@ export interface backendInterface {
     isCallerAdmin(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     submitConsultationBooking(name: string, email: string, phone: string, preferredDate: string, consultationType: ConsultationType, message: string | null): Promise<bigint>;
-    submitMaintenanceSignUp(name: string, email: string, phone: string, propertyAddress: string, propertyType: PropertyType, maintenancePlan: MaintenancePlan): Promise<bigint>;
+    submitMaintenanceSignUp(name: string, email: string, phone: string, propertyAddress: string, propertyType: PropertyType, notes: string | null): Promise<bigint>;
     updateConsultationStatus(id: bigint, status: ConsultationStatus): Promise<void>;
     updateMaintenanceStatus(id: bigint, status: MaintenanceStatus): Promise<void>;
 }
