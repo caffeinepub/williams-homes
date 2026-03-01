@@ -1,6 +1,5 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -21,22 +20,14 @@ import { useInternetIdentity } from "@/hooks/useInternetIdentity";
 import {
   useAllConsultations,
   useAllMaintenanceSignUps,
+  useInitializeAccess,
   useIsAdmin,
   useUpdateConsultationStatus,
   useUpdateMaintenanceStatus,
 } from "@/hooks/useQueries";
-import {
-  ArrowRight,
-  ChevronDown,
-  ChevronUp,
-  Copy,
-  ExternalLink,
-  Loader2,
-  RefreshCw,
-  Shield,
-} from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { Loader2, RefreshCw, Shield } from "lucide-react";
+import { motion } from "motion/react";
+import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { ConsultationStatus, MaintenanceStatus } from "../backend";
 import type { ConsultationBooking, MaintenanceSignUp } from "../backend.d.ts";
@@ -300,198 +291,16 @@ function MaintenanceTable({ signUps }: { signUps: MaintenanceSignUp[] }) {
   );
 }
 
-function AccessDeniedHelp() {
-  const [showForm, setShowForm] = useState(false);
-  const [token, setToken] = useState("");
-  const currentUrl = `${window.location.origin}/admin`;
-
-  const handleGo = () => {
-    if (!token.trim()) {
-      toast.error("Please enter your admin token first");
-      return;
-    }
-    window.location.href = `${currentUrl}?caffeineAdminToken=${encodeURIComponent(token.trim())}`;
-  };
-
-  const copyUrl = () => {
-    const url = `${currentUrl}?caffeineAdminToken=${token.trim() || "YOUR_TOKEN_HERE"}`;
-    navigator.clipboard.writeText(url).then(() => toast.success("URL copied!"));
-  };
-
-  return (
-    <main className="min-h-screen bg-background flex items-center justify-center px-4 pt-20 pb-12">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-lg w-full"
-      >
-        {/* Icon + title */}
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center mx-auto mb-5">
-            <Shield className="w-8 h-8 text-destructive" />
-          </div>
-          <h1 className="font-display text-3xl font-semibold text-foreground mb-2">
-            Access Denied
-          </h1>
-          <p className="font-body text-muted-foreground leading-relaxed">
-            Your account isn't registered as an admin yet. Follow the steps
-            below to set up admin access.
-          </p>
-        </div>
-
-        {/* Steps card */}
-        <div className="bg-card border border-border rounded-2xl p-6 mb-4 space-y-5">
-          <h2 className="font-heading font-semibold text-sm uppercase tracking-wider text-muted-foreground">
-            How to get admin access
-          </h2>
-
-          <div className="space-y-4">
-            {/* Step 1 */}
-            <div className="flex gap-3">
-              <div className="flex-shrink-0 w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center mt-0.5">
-                <span className="font-heading font-bold text-xs text-primary">
-                  1
-                </span>
-              </div>
-              <div>
-                <p className="font-body text-sm font-medium text-foreground mb-1">
-                  Find your admin token
-                </p>
-                <p className="font-body text-sm text-muted-foreground leading-relaxed">
-                  Go to your{" "}
-                  <strong className="text-foreground">
-                    Caffeine dashboard
-                  </strong>{" "}
-                  → open the{" "}
-                  <strong className="text-foreground">Williams Homes</strong>{" "}
-                  project → click{" "}
-                  <strong className="text-foreground">Settings</strong> or{" "}
-                  <strong className="text-foreground">
-                    Environment Variables
-                  </strong>
-                  . Look for the key named:
-                </p>
-                <div className="mt-2 px-3 py-2 bg-muted rounded-lg font-mono text-sm text-foreground border border-border">
-                  CAFFEINE_ADMIN_TOKEN
-                </div>
-              </div>
-            </div>
-
-            {/* Step 2 */}
-            <div className="flex gap-3">
-              <div className="flex-shrink-0 w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center mt-0.5">
-                <span className="font-heading font-bold text-xs text-primary">
-                  2
-                </span>
-              </div>
-              <div>
-                <p className="font-body text-sm font-medium text-foreground mb-1">
-                  Visit the admin URL with your token
-                </p>
-                <p className="font-body text-sm text-muted-foreground mb-2">
-                  The URL format is:
-                </p>
-                <div className="flex items-center gap-2 px-3 py-2 bg-muted rounded-lg border border-border">
-                  <code className="font-mono text-xs text-foreground flex-1 break-all">
-                    {currentUrl}?caffeineAdminToken=
-                    <span className="text-primary">YOUR_TOKEN</span>
-                  </code>
-                  <button
-                    type="button"
-                    onClick={copyUrl}
-                    className="flex-shrink-0 text-muted-foreground hover:text-foreground transition-colors"
-                    title="Copy URL"
-                  >
-                    <Copy className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Quick setup form */}
-        <div className="bg-card border border-border rounded-2xl overflow-hidden">
-          <button
-            type="button"
-            onClick={() => setShowForm(!showForm)}
-            className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-muted/40 transition-colors"
-          >
-            <div className="flex items-center gap-2">
-              <ArrowRight className="w-4 h-4 text-primary" />
-              <span className="font-heading font-semibold text-sm text-foreground">
-                Quick Setup — Enter your token here
-              </span>
-            </div>
-            {showForm ? (
-              <ChevronUp className="w-4 h-4 text-muted-foreground" />
-            ) : (
-              <ChevronDown className="w-4 h-4 text-muted-foreground" />
-            )}
-          </button>
-
-          <AnimatePresence>
-            {showForm && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="overflow-hidden"
-              >
-                <div className="px-6 pb-6 pt-1 space-y-3 border-t border-border">
-                  <label
-                    htmlFor="admin-token-input"
-                    className="font-body text-sm text-muted-foreground"
-                  >
-                    Paste your{" "}
-                    <code className="font-mono text-xs bg-muted px-1.5 py-0.5 rounded">
-                      CAFFEINE_ADMIN_TOKEN
-                    </code>{" "}
-                    value:
-                  </label>
-                  <Input
-                    id="admin-token-input"
-                    value={token}
-                    onChange={(e) => setToken(e.target.value)}
-                    placeholder="e.g. abc123xyz..."
-                    className="font-mono text-sm"
-                    onKeyDown={(e) => e.key === "Enter" && handleGo()}
-                  />
-                  <div className="flex gap-2 pt-1">
-                    <Button
-                      onClick={handleGo}
-                      className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 font-heading font-semibold"
-                    >
-                      <ExternalLink className="mr-2 h-4 w-4" />
-                      Go to Admin
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={copyUrl}
-                      className="font-heading"
-                    >
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <p className="font-body text-xs text-muted-foreground">
-                    This will navigate to the admin URL with your token
-                    appended, registering you as admin.
-                  </p>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </motion.div>
-    </main>
-  );
-}
-
 export function AdminPage() {
-  const { login, isLoggingIn, identity } = useInternetIdentity();
-  const { data: isAdmin, isLoading: isCheckingAdmin } = useIsAdmin();
+  const { login, clear, isLoggingIn, identity } = useInternetIdentity();
+  const {
+    data: isAdmin,
+    isLoading: isCheckingAdmin,
+    refetch: refetchIsAdmin,
+  } = useIsAdmin();
+  const initAccess = useInitializeAccess();
+  const hasRegistered = useRef(false);
+
   const {
     data: consultations = [],
     isLoading: loadingConsultations,
@@ -503,11 +312,33 @@ export function AdminPage() {
     refetch: refetchMaintenance,
   } = useAllMaintenanceSignUps();
 
+  // Auto-register user when identity is available — first visitor becomes admin automatically
+  useEffect(() => {
+    if (identity && !hasRegistered.current && initAccess.status === "idle") {
+      hasRegistered.current = true;
+      initAccess.mutate("", {
+        onSuccess: (isNowAdmin) => {
+          if (isNowAdmin) {
+            toast.success(
+              "Admin access granted! Welcome to Williams Homes dashboard.",
+            );
+          }
+          void refetchIsAdmin();
+        },
+        onError: () => {
+          // Silently fail — user might already be registered
+          void refetchIsAdmin();
+        },
+      });
+    }
+  }, [identity, initAccess, refetchIsAdmin]);
+
   const handleRefresh = () => {
     void refetchConsultations();
     void refetchMaintenance();
   };
 
+  // Not logged in
   if (!identity) {
     return (
       <main className="min-h-screen bg-background flex items-center justify-center px-4 pt-20">
@@ -524,8 +355,8 @@ export function AdminPage() {
             Admin Access
           </h1>
           <p className="font-body text-muted-foreground mb-8 leading-relaxed">
-            Please log in to access the admin dashboard. Only authorized
-            administrators can view booking and sign-up data.
+            Please log in to access the admin dashboard. Only the registered
+            owner can view booking and sign-up data.
           </p>
           <Button
             onClick={login}
@@ -547,23 +378,55 @@ export function AdminPage() {
     );
   }
 
-  if (isCheckingAdmin) {
+  // Checking admin status or registering user
+  if (isCheckingAdmin || initAccess.isPending) {
     return (
       <main className="min-h-screen bg-background flex items-center justify-center pt-20">
         <div className="text-center">
           <Loader2 className="w-8 h-8 text-accent animate-spin mx-auto mb-3" />
           <p className="font-body text-muted-foreground">
-            Checking admin access...
+            {initAccess.isPending
+              ? "Registering account…"
+              : "Checking admin access..."}
           </p>
         </div>
       </main>
     );
   }
 
+  // Access denied — simple restricted message for non-admin visitors
   if (!isAdmin) {
-    return <AccessDeniedHelp />;
+    return (
+      <main className="min-h-screen bg-background flex items-center justify-center px-4 pt-20 pb-12">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="max-w-sm w-full text-center"
+        >
+          <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center mx-auto mb-6">
+            <Shield className="w-8 h-8 text-destructive" />
+          </div>
+          <h1 className="font-display text-3xl font-semibold text-foreground mb-3">
+            Access Denied
+          </h1>
+          <p className="font-body text-muted-foreground leading-relaxed mb-8">
+            This area is restricted to the site owner. Please sign in with the
+            correct account to access the admin dashboard.
+          </p>
+          <Button
+            variant="outline"
+            onClick={clear}
+            className="font-heading font-semibold w-full"
+          >
+            Sign Out / Try Different Account
+          </Button>
+        </motion.div>
+      </main>
+    );
   }
 
+  // Admin dashboard
   return (
     <main className="min-h-screen bg-background">
       {/* Admin Header */}

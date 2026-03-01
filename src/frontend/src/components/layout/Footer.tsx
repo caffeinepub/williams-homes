@@ -7,12 +7,14 @@ export function Footer() {
 
   return (
     <footer className="bg-primary text-primary-foreground">
+      {/* Traditional Goa azulejo tile strip at footer top */}
+      <div className="tile-border w-full" />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-9 h-9 rounded-lg bg-accent flex items-center justify-center">
+              <div className="w-9 h-9 rounded-lg bg-accent flex items-center justify-center ring-1 ring-accent/30">
                 <Building2 className="w-5 h-5 text-accent-foreground" />
               </div>
               <div className="flex flex-col leading-none">
@@ -24,10 +26,13 @@ export function Footer() {
                 </span>
               </div>
             </div>
-            <p className="text-primary-foreground/65 text-sm leading-relaxed max-w-sm font-body">
+            <p className="text-primary-foreground/65 text-sm leading-relaxed max-w-sm font-body mb-2">
               Goa-based property maintenance specialists. We protect and manage
               your Goa home or villa — ideal for NRIs and owners residing
               outside India.
+            </p>
+            <p className="text-accent/70 text-xs font-body italic">
+              Serving Goa with Pride Since 2022
             </p>
           </div>
 

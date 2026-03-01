@@ -1,20 +1,31 @@
 # Williams Homes
 
 ## Current State
-A property maintenance and consultation booking website for Williams Homes, Goa. Has a backend with consultation bookings, maintenance sign-ups, and an admin panel. The admin system uses a token-based initialization (CAFFEINE_ADMIN_TOKEN) which the owner cannot access, causing "Access Denied" on /admin.
+Full-stack property management website for Williams Homes, Goa. Has consultation booking, maintenance quote forms, admin dashboard, and a Goa-themed design. Admin access currently requires `CAFFEINE_ADMIN_TOKEN` to be present as an environment variable, causing "Access Denied" issues when the token is unavailable.
 
 ## Requested Changes (Diff)
 
 ### Add
-- A no-token admin initialization function: the very first logged-in user to visit /admin automatically becomes admin, no token required.
+- Richer Goa traditional theme: Portuguese tile patterns, terracotta / saffron / deep teal / frangipani white color palette, traditional azulejo tile-inspired decorative elements, coconut palm motifs, Konkani cultural touches
+- New decorative section dividers with tile patterns
 
 ### Modify
-- Backend: replace token-gated admin claim with automatic first-caller-becomes-admin logic (no CAFFEINE_ADMIN_TOKEN needed).
-- Frontend /admin page: on login, immediately call the new no-token init function so the first user is registered as admin automatically.
+- Backend: `_initializeAccessControlWithSecret` to not require CAFFEINE_ADMIN_TOKEN — instead, first person to call this function becomes admin, everyone else gets user role
+- `access-control.mo` `initialize` function: remove `adminToken` / `userProvidedToken` comparison, simply assign first caller as admin
+- `MixinAuthorization.mo`: remove envVar lookup, just call `AccessControl.initialize` with caller
+- `AdminPage.tsx`: remove the token claim form completely, auto-grant admin on first login, show simple "Access Denied" to non-admins
+- `useQueries.ts`: `useInitializeAccess` mutation simplified — no token arg needed
+- `index.css`: Deeper Goa traditional palette — terracotta primary, saffron accent, deep teal secondary tones, enhanced tile-border pattern
 
 ### Remove
-- Token entry UI on the admin page (no longer needed).
+- Admin token claim form from AdminPage
+- Token instructions and "Where to find your token" section
+- `CAFFEINE_ADMIN_TOKEN` dependency from backend mixin
 
 ## Implementation Plan
-1. Regenerate backend with `initializeNoToken` function that grants admin to the first non-anonymous caller with no token check.
-2. Update frontend AdminPage to call `initializeNoToken` after login instead of requiring a token.
+1. Update `access-control.mo` — remove token comparison, first caller = admin
+2. Update `MixinAuthorization.mo` — remove envVar lookup, call initialize directly
+3. Update `useQueries.ts` — simplify `useInitializeAccess` to not pass token
+4. Update `AdminPage.tsx` — remove token form, auto-register on login
+5. Update `index.css` — enhance Goa traditional theme colors and tile patterns
+6. Update `HomePage.tsx` and other pages with enhanced Goa cultural elements

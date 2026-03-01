@@ -92,6 +92,9 @@ const goaAreas = [
 export function HomePage() {
   return (
     <main>
+      {/* Portuguese Tile Color Strip */}
+      <div className="tile-border w-full" />
+
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
         {/* Background Image */}
@@ -99,7 +102,7 @@ export function HomePage() {
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage:
-              "url(/assets/generated/hero-property.dim_1600x900.jpg)",
+              "url(/assets/generated/hero-goa-beach.dim_1600x900.jpg)",
           }}
         />
         {/* Overlay */}
@@ -118,6 +121,44 @@ export function HomePage() {
               <span className="font-heading text-xs uppercase tracking-widest text-accent font-semibold">
                 Goa, India · Property Services
               </span>
+            </motion.div>
+
+            {/* Ornamental azulejo divider */}
+            <motion.div
+              initial={{ opacity: 0, scaleX: 0 }}
+              animate={{ opacity: 1, scaleX: 1 }}
+              transition={{ duration: 0.6, delay: 0.08, ease: "easeOut" }}
+              className="flex items-center gap-3 mb-5"
+            >
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-accent/50 to-accent/20" />
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 18 18"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <rect
+                  x="9"
+                  y="0"
+                  width="6.36"
+                  height="6.36"
+                  rx="1"
+                  transform="rotate(45 9 0)"
+                  fill="oklch(0.68 0.20 42 / 0.8)"
+                />
+                <rect
+                  x="9"
+                  y="0"
+                  width="3.5"
+                  height="3.5"
+                  rx="0.5"
+                  transform="rotate(45 9 0) translate(1.43 1.43)"
+                  fill="oklch(0.52 0.18 195 / 0.6)"
+                />
+              </svg>
+              <div className="flex-1 h-px bg-gradient-to-l from-transparent via-accent/50 to-accent/20" />
             </motion.div>
 
             <motion.h1
@@ -338,7 +379,7 @@ export function HomePage() {
       </section>
 
       {/* Why Choose Us */}
-      <section className="py-24 bg-secondary/50">
+      <section className="py-24 bg-secondary/50 azulejo-pattern">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="hidden"
@@ -360,6 +401,13 @@ export function HomePage() {
             >
               Built for Goa Property Owners
             </motion.h2>
+            <motion.p
+              variants={fadeUp}
+              custom={2}
+              className="font-body text-sm text-accent/80 italic tracking-wide"
+            >
+              Aamchi Maati, Aamchi Maaya — Our Land, Our Care
+            </motion.p>
           </motion.div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -431,7 +479,7 @@ export function HomePage() {
             {goaAreas.map((area) => (
               <div
                 key={area}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-border bg-card text-sm font-body text-foreground/70 hover:border-accent/40 hover:text-foreground transition-colors"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-border bg-card text-sm font-body text-foreground/70 hover:border-accent/60 hover:bg-accent/5 hover:text-foreground transition-all duration-200 cursor-default"
               >
                 <MapPin className="w-3.5 h-3.5 text-accent" />
                 {area}
@@ -510,6 +558,88 @@ export function HomePage() {
         </div>
       </section>
 
+      {/* Goa Cultural Section Divider — stylized palm & cross motif */}
+      <div className="flex items-center justify-center gap-4 py-6 bg-background">
+        <div className="flex-1 max-w-32 h-px bg-gradient-to-r from-transparent to-border" />
+        <svg
+          width="64"
+          height="24"
+          viewBox="0 0 64 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+          className="opacity-60"
+        >
+          {/* Palm leaf left */}
+          <path
+            d="M8 20 C8 20 2 14 4 8 C6 4 10 6 8 20Z"
+            fill="oklch(0.58 0.15 148 / 0.5)"
+          />
+          <path
+            d="M8 20 C8 20 1 16 5 10 C7 7 11 10 8 20Z"
+            fill="oklch(0.58 0.15 148 / 0.3)"
+          />
+          <line
+            x1="8"
+            y1="20"
+            x2="8"
+            y2="22"
+            stroke="oklch(0.52 0.18 195 / 0.6)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+          {/* Center cross/church motif */}
+          <line
+            x1="32"
+            y1="2"
+            x2="32"
+            y2="22"
+            stroke="oklch(0.68 0.20 42 / 0.7)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+          <line
+            x1="26"
+            y1="8"
+            x2="38"
+            y2="8"
+            stroke="oklch(0.68 0.20 42 / 0.7)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+          <circle cx="32" cy="5" r="1.5" fill="oklch(0.52 0.18 195 / 0.6)" />
+          {/* Diamond tiles */}
+          <rect
+            x="28.5"
+            y="13.5"
+            width="4"
+            height="4"
+            rx="0.5"
+            transform="rotate(45 30.5 15.5)"
+            fill="oklch(0.68 0.20 42 / 0.4)"
+          />
+          {/* Palm leaf right */}
+          <path
+            d="M56 20 C56 20 62 14 60 8 C58 4 54 6 56 20Z"
+            fill="oklch(0.58 0.15 148 / 0.5)"
+          />
+          <path
+            d="M56 20 C56 20 63 16 59 10 C57 7 53 10 56 20Z"
+            fill="oklch(0.58 0.15 148 / 0.3)"
+          />
+          <line
+            x1="56"
+            y1="20"
+            x2="56"
+            y2="22"
+            stroke="oklch(0.52 0.18 195 / 0.6)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+        </svg>
+        <div className="flex-1 max-w-32 h-px bg-gradient-to-l from-transparent to-border" />
+      </div>
+
       {/* CTA Band */}
       <section className="py-20 bg-primary">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -550,6 +680,9 @@ export function HomePage() {
           </motion.div>
         </div>
       </section>
+
+      {/* Portuguese Tile Color Strip — bottom */}
+      <div className="tile-border w-full" />
     </main>
   );
 }

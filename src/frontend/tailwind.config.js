@@ -84,7 +84,9 @@ export default {
         xs: "0 1px 2px 0 rgba(0,0,0,0.05)",
         card: "0 4px 24px -4px rgba(0,0,0,0.10), 0 1px 4px -1px rgba(0,0,0,0.06)",
         elevated: "0 12px 48px -8px rgba(0,0,0,0.15), 0 4px 12px -4px rgba(0,0,0,0.08)",
-        glow: "0 0 32px -4px oklch(0.68 0.16 42 / 0.40)",
+        glow: "0 0 32px -4px oklch(0.68 0.20 42 / 0.45)",
+        "glow-card": "0 4px 24px -4px oklch(0.68 0.20 42 / 0.18), 0 1px 4px -1px oklch(0.20 0.09 248 / 0.08)",
+        tile: "0 2px 12px 0 oklch(0.68 0.20 42 / 0.15), 0 1px 3px 0 oklch(0.52 0.18 195 / 0.10)",
       },
       keyframes: {
         "accordion-down": {

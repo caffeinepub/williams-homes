@@ -33,7 +33,7 @@ export function Header() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-primary/95 backdrop-blur-md shadow-elevated"
+          ? "bg-primary/97 backdrop-blur-md shadow-elevated header-scroll-pattern"
           : "bg-primary/80 backdrop-blur-sm"
       }`}
     >
@@ -41,7 +41,7 @@ export function Header() {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-lg bg-accent flex items-center justify-center shadow-glow group-hover:scale-105 transition-transform">
+            <div className="w-9 h-9 rounded-lg bg-accent flex items-center justify-center shadow-tile group-hover:scale-105 transition-transform ring-1 ring-accent/30">
               <Building2 className="w-5 h-5 text-accent-foreground" />
             </div>
             <div className="flex flex-col leading-none">

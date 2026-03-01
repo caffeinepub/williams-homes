@@ -152,3 +152,20 @@ export function useRegisterUser() {
     enabled: !!actor && !isFetching,
   });
 }
+
+// Attempt to initialize access control: registers user and optionally grants admin
+// Returns true if caller is now admin, false otherwise
+export function useInitializeAccess() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation<boolean, Error, string>({
+    mutationFn: async (token: string) => {
+      if (!actor) throw new Error("Actor not available");
+      await actor._initializeAccessControlWithSecret(token);
+      return actor.isCallerAdmin();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["isAdmin"] });
+    },
+  });
+}
