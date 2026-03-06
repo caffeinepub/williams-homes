@@ -88,14 +88,18 @@ export function useSubmitConsultation() {
       }
     >({
       mutationFn: async (data) => {
-        // Wait up to 15 seconds for actor to be available
+        // Wait up to 20 seconds for actor to be available
+        // Use predicate to match ["actor", <principal>] query keys correctly
         let resolvedActor = actor;
         if (!resolvedActor) {
-          for (let i = 0; i < 30; i++) {
+          for (let i = 0; i < 40; i++) {
             await new Promise((r) => setTimeout(r, 500));
             const entries = queryClient.getQueriesData<
               import("../backend").backendInterface
-            >({ queryKey: ["actor"] });
+            >({
+              predicate: (query) =>
+                Array.isArray(query.queryKey) && query.queryKey[0] === "actor",
+            });
             const found = entries.map(([, v]) => v).find((v) => v != null);
             if (found) {
               resolvedActor = found;
@@ -141,14 +145,18 @@ export function useSubmitMaintenance() {
       }
     >({
       mutationFn: async (data) => {
-        // Wait up to 15 seconds for actor to be available
+        // Wait up to 20 seconds for actor to be available
+        // Use predicate to match ["actor", <principal>] query keys correctly
         let resolvedActor = actor;
         if (!resolvedActor) {
-          for (let i = 0; i < 30; i++) {
+          for (let i = 0; i < 40; i++) {
             await new Promise((r) => setTimeout(r, 500));
             const entries = queryClient.getQueriesData<
               import("../backend").backendInterface
-            >({ queryKey: ["actor"] });
+            >({
+              predicate: (query) =>
+                Array.isArray(query.queryKey) && query.queryKey[0] === "actor",
+            });
             const found = entries.map(([, v]) => v).find((v) => v != null);
             if (found) {
               resolvedActor = found;
@@ -227,12 +235,13 @@ export function useInitializeAccess() {
       // Wait up to 15 seconds for actor to be available
       let resolvedActor = actor;
       if (!resolvedActor) {
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < 40; i++) {
           await new Promise((r) => setTimeout(r, 500));
           const entries = queryClient.getQueriesData<
             import("../backend").backendInterface
           >({
-            queryKey: ["actor"],
+            predicate: (query) =>
+              Array.isArray(query.queryKey) && query.queryKey[0] === "actor",
           });
           const found = entries.map(([, v]) => v).find((v) => v != null);
           if (found) {
